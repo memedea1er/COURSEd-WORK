@@ -1,4 +1,5 @@
 Генератор лабиринтов v.01b  
+
 Командны:  
 SIZE int XSIZE int YSIZE - задание размера лабиринта  
 WALL int XCOORD int YCOORD - расположение стены в лабиринте по координатам XCOORD и YCOORD  
