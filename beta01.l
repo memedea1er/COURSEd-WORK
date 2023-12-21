@@ -1,5 +1,5 @@
 %{
-#include "gl.tab.h"
+#include "beta01.tab.h"
 %}
 
 %%
