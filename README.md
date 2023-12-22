@@ -1,6 +1,6 @@
 Генератор лабиринтов v.01b  
 flex файл: beta01.l  
-bison файл: beta01.y  
+bison файл с трансляцией на lc3: beta01.y  
 bison файл с трансляцией на c: c_concept.y  
 Командны:  
 SIZE int XSIZE int YSIZE - задание размера лабиринта  
