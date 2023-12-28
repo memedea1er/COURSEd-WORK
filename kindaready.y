@@ -7,27 +7,37 @@ extern FILE *yyout;
 
 %union {
     int num; 
+    struct Array {
+        int arr[2];
+    } array;
 }
 
 %token <num> NUMBER 
 %token BEGI SIZE WALL FLOOR EOL END
-%type <num> placewall placefloor commands 
+%type <num> commands 
+%type <array> placewall placefloor
 
 %%
 
 commands
     : { $$ = 0; }
-    | commands placefloor NUMBER EOL { fprintf(yyout, "CHECK_%d\nADD R7, R2, #-%d\nBRnp CHECK_%d\nADD R7, R4, #-%d\nBRnp CHECK_%d\nBRnzp PRINT_F\n", $$, $3, $$+1, $2, $$+1); $$ += 1;}
-    | commands placewall NUMBER EOL { fprintf(yyout, "CHECK_%d\nADD R7, R2, #-%d\nBRnp CHECK_%d\nADD R7, R4, #-%d\nBRnp CHECK_%d\nBRnzp PRINT_W\n", $$, $3, $$+1, $2, $$+1); $$ += 1;}
-    | commands placefloor NUMBER EOL END {fprintf(yyout, "CHECK_%d\nADD R7, R2, #-%d\nBRnp PRINT_F\nADD R7, R4, #-%d\nBRnp PRINT_F\nBRnzp PRINT_F\nDONE HALT\n.END", $$, $3, $2); YYACCEPT;}
-    | commands placewall NUMBER EOL END {fprintf(yyout, "CHECK_%d\nADD R7, R2, #-%d\nBRnp PRINT_F\nADD R7, R4, #-%d\nBRnp PRINT_F\nBRnzp PRINT_W\nDONE HALT\n.END", $$, $3, $2); YYACCEPT;}
+    | commands placefloor EOL { fprintf(yyout, "CHECK_%d\nADD R7, R2, #-%d\nBRnp CHECK_%d\nADD R7, R4, #-%d\nBRnp CHECK_%d\nBRnzp PRINT_F\n", $$, $2.arr[0], $$+1, $2.arr[1], $$+1); $$ += 1;}
+    | commands placewall EOL { fprintf(yyout, "CHECK_%d\nADD R7, R2, #-%d\nBRnp CHECK_%d\nADD R7, R4, #-%d\nBRnp CHECK_%d\nBRnzp PRINT_W\n", $$, $2.arr[0], $$+1, $2.arr[1], $$+1); $$ += 1;}
+    | commands placefloor EOL END {fprintf(yyout, "CHECK_%d\nADD R7, R2, #-%d\nBRnp PRINT_F\nADD R7, R4, #-%d\nBRnp PRINT_F\nBRnzp PRINT_F\nDONE HALT\n.END", $$, $2.arr[1], $2.arr[0]); YYACCEPT;}
+    | commands placewall EOL END {fprintf(yyout, "CHECK_%d\nADD R7, R2, #-%d\nBRnp PRINT_F\nADD R7, R4, #-%d\nBRnp PRINT_F\nBRnzp PRINT_W\nDONE HALT\n.END", $$, $2.arr[1], $2.arr[0]); YYACCEPT;}
     | commands start EOL {; }
     ;
 placefloor
-    : FLOOR NUMBER { $$ = $2; }
+    : FLOOR NUMBER NUMBER { 
+        $$.arr[1] = $2; 
+        $$.arr[0] = $3; 
+      }
     ;
 placewall
-    : WALL NUMBER { $$ = $2; }
+    : WALL NUMBER NUMBER { 
+        $$.arr[1] = $2; 
+        $$.arr[0] = $3; 
+      }
     ;
 start
     : BEGI {fprintf(yyout, ".ORIG x3000\nINIT LD R1, F_CHAR\nLD R5, NEWLINE\nLD R2, COUNT\nAND R4, R4, #0\nAND R3, R3, #0\nPRINT_NEXT_LINE\nADD R4, R4, #1\nBRnzp CHECK_0\n");}
