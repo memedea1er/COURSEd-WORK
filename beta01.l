@@ -1,24 +1,21 @@
 %{
-#include "beta01.tab.h"
+#include "test.tab.h"
 %}
 
 %%
 
-SIZE      { return SIZE; }
-WALL       { return WALL; }
-FLOOR      { return FLOOR; }
-DOOR      { return DOOR; }
-CHEST      { return CHEST; }
-TRAP      { return TRAP; }
-[0-9]+     { yylval.num = atoi(yytext); return NUMBER; }
-\n         { return EOL; }
-QUIT       { return QUIT; }
-
-[ \t]+     ; // Игнорировать пробелы и табуляции
-.          { printf("Invalid input\n"); }
+"PLACEBEGIN"    { return PLACEBEGIN; }
+"PLACEEND"      { return PLACEEND; }
+"BEGIN"         { return BEGI; }
+"SIZE"          { return SIZE; }
+"WALL"          { return WALL; }
+"FLOOR"         { return FLOOR; }
+[0-9]+          { yylval.num = atoi(yytext); return NUMBER; }
+";"             { return SEM; }
+"("             { return LBR; }
+")"             { return RBR; }
+"END"           { return END; }
+[ \t\n]+
+.               { printf("Invalid input\n"); }
 
 %%
-
-int yywrap() {
-    return 1;
-}
